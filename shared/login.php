@@ -1,36 +1,83 @@
 <?php
 
-session_start();
-$_SESSION['login_status']=false;
+$email = $_POST['email'];
+$upass = $_POST['upass'];
 
-$uname=$_POST['uname'];
-$upass=$_POST['upass'];
-$cipher_text=md5($upass);
-
-include_once "connection.php";
-
-$sql_obj=mysqli_query($conn,"select * from user where username='$uname' and password='$cipher_text'");
-
-$no_of_records=mysqli_num_rows($sql_obj);
-if($no_of_records==0){
-    echo 'Invalid Credentials';
-    die;
+// Validate email format
+if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    echo "Invalid email format.";
+    exit;
 }
 
-echo "Login Success";
-$row=mysqli_fetch_assoc($sql_obj);
+// Establish connection to MySQL
+$con = mysqli_connect('localhost', 'root', '', 'rrstudios');
 
-print_r($row);
-
-$_SESSION['login_status']=true;
-$_SESSION['usertype']=$row['usertype'];
-$_SESSION['username']=$row['username'];
-$_SESSION['userid']=$row['userid'];
-
-if($row['usertype']=='Vendor'){
-    header("location:../vendor/home.php");
+// Check connection
+if (mysqli_connect_errno()) {
+    echo "Failed to connect to MySQL: " . mysqli_connect_error();
+    exit();
 }
-else if($row['usertype']=='Customer'){
-    header("location:../customer/home.php");
+
+// Query to get user data
+$q = "SELECT * FROM userinfo WHERE email = '$email'";
+
+// Execute the query
+$result = mysqli_query($con, $q);
+
+// Check if query execution was successful
+// if ($result) {
+//     // Check if any rows were returned
+//     if (mysqli_num_rows($result) > 0) {
+//         // Fetch the data
+//         $row = mysqli_fetch_assoc($result);
+
+//         // Output the user ID (example)
+//         echo "User ID: " . $row['uid'];
+//     }
+    
+//     else {
+//         echo "No user found with the provided email.";
+//     }
+// }
+
+// else {
+//     echo "Error: " . mysqli_error($con);
+// }
+
+
+if ($result) {
+    // Check if any rows were returned
+    if (mysqli_num_rows($result) > 0) {
+        // Fetch the data
+        $row = mysqli_fetch_assoc($result);
+
+        // Output the user ID (example)
+        if($row['password']==htmlspecialchars($upass)){
+
+            echo "Login success\n";
+
+            $delay = 3; // 3 seconds
+            // Output a message
+            echo "Redirecting in " . $delay . " seconds...";
+            // Introduce a delay
+            sleep($delay);
+
+        }
+
+        // Redirect after the delay
+        header("Location: ../index.html");
+    }
+    
+    else {
+        echo "No user found with the provided email.";
+    }
 }
+
+else {
+    echo "Error: " . mysqli_error($con);
+}
+
+// Close connection
+mysqli_close($con);
+
 ?>
