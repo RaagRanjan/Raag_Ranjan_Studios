@@ -54,14 +54,16 @@
             <img src="../image/Advertisement1.jpg" alt="">
         </div>
 
-        <form action="signup.php" method="post" class="bg-secondary p-4" onsubmit="return validate()">
+        <form action="signup.php" method="get" class="bg-secondary p-4" onsubmit="return validate()">
+
             <h3 class="text-center text-white">Signup here..</h3>
 
             <input name="uname" required class="box" type="text" placeholder="Enter username">
+            <input name="email" required class="box" type="email" placeholder="Enter email">
             <input name="upass1" required class="box" type="password" placeholder="Enter Password" id="pass1">
             <input name="upass2" required  class="box"type="password" placeholder="Retype Password" id="pass2">
 
-            <select name="user_type" required class="box" name="" id="">
+            <select name="user_type" required class="box" name="" id="" style="color: black;">
                 <option>Vendor</option>
                 <option>Customer</option>
             </select>
